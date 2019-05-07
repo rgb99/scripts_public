@@ -212,6 +212,9 @@ if ($moduleExists) {
 		$seconds = $stopWatch.Elapsed.Seconds
 		Write-Host "Upgrade completed in $minutes minutes and $seconds seconds."
 	}
+} else {
+	Write-Host "Module HPEiLOCmdlets is not loaded or does not meet the minimum version requirement (2.0.0.1)" -ForegroundColor Red
+	Write-Host "Exiting script..."
 }
 
 Set-WindowTitle -Title "Administrator: Windows PowerShell"
