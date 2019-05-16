@@ -12,10 +12,10 @@
 #
 # Latest firmware version for various iLO generations
 $ilo3latest = 1.91
-$ilo4latest = 2.62
+$ilo4latest = 2.70
 $ilo5latest = 1.40
 # Firmware update file location for iLO 4 and iLO 5
-$ilo4FileLocation = "D:\HP\ilo4_262.bin"
+$ilo4FileLocation = "D:\HP\ilo4_270.bin"
 $ilo5FileLocation = "D:\HP\ilo5_140.bin"
 
 function Set-WindowTitle {
