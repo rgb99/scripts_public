@@ -65,7 +65,6 @@ if ($moduleExists) {
 	$username = Read-Host -Prompt "`nEnter iLO username"
 	$securepassword = Read-Host -Prompt "Enter iLO password" -AsSecureString
 	$credentials = New-Object System.Management.Automation.PSCredential -ArgumentList $username,$securepassword
-	$password = $Credentials.GetNetworkCredential().Password
 
 	$step = 1
 
@@ -146,7 +145,7 @@ if ($moduleExists) {
 				Write-Host ")"
 				Write-Host " `tThis script can only upgrade iLO 4 or newer. Please upgrade through other methods!" -ForegroundColor Yellow
 			} elseif ($pn -like "*iLO 4*" -and $firmware -lt $ilo4latest) {
-				$ilo4list += $findinf
+				$ilo4list += $findinfo
 				$ilo4count++
 				Write-Host "`t$pn firmware is out-of-date. (Detected = " -NoNewLine
 				Write-Host "$firmware" -ForegroundColor Red -NoNewLine
