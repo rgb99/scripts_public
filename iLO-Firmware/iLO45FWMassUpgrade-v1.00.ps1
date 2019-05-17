@@ -58,6 +58,26 @@ function Set-TaskbarNotification {
 	}
 }
 
+function UpgradeiLOFirmware {
+	Param (
+		$iloList,
+		[string]$iloFileLocation
+	)
+	$startTime = (Get-Date).ToString()
+	Write-Host "Started at: $startTime"
+	# Start stopwatch
+	$StopWatch = [System.Diagnostics.Stopwatch]::StartNew()
+	# Login to all iLO devices
+	$connection = $iloList | Connect-HPEiLO -Credential $credentials -DisableCertificateAuthentication -Ea SilentlyContinue -Wa SilentlyContinue
+	# Upgrade all iLO device firmware
+	Update-HPEiLOFirmware -Connection $connection -Location $iloFileLocation -confirm:$false -Wa SilentlyContinue -Ea SilentlyContinue | Out-Null
+	# Stop stopwatch upon completion
+	$StopWatch.Stop()
+	$minutes = $stopWatch.Elapsed.Minutes
+	$seconds = $stopWatch.Elapsed.Seconds
+	Write-Host "Upgrade completed in $minutes minutes and $seconds seconds."
+}
+
 Write-Host "`nChecking for HPEiLOCmdlets module..."
 $moduleExists = Get-InstalledModule -Name "HPEiLOCmdlets" -MinimumVersion "2.0.0.1" -Ea SilentlyContinue
 if ($moduleExists) {
@@ -65,6 +85,7 @@ if ($moduleExists) {
 	$username = Read-Host -Prompt "`nEnter iLO username"
 	$securepassword = Read-Host -Prompt "Enter iLO password" -AsSecureString
 	$credentials = New-Object System.Management.Automation.PSCredential -ArgumentList $username,$securepassword
+	#$password = $Credentials.GetNetworkCredential().Password
 
 	$step = 1
 
@@ -167,49 +188,25 @@ if ($moduleExists) {
 
 	Write-Host "`n"
 	if ($ilo4list.count -eq 0) {
-		Write-Host "All iLO 4 devices, if detected, are up-to-date."
+		Write-Host "All iLO 4 devices, if detected, are up-to-date.`n"
 	} else {
-		Write-Host "Upgrading out-of-date iLO 4 firmware for $ilo4count devices... (this may take up to 15 minutes)"
+		Write-Host "Upgrading $ilo4count out-of-date iLO 4 firmware devices... (this may take up to 15 minutes)"
 		Set-WindowTitle -Title "Upgrading ilO 4 firmware"
-		$startTime = (Get-Date).ToString()
-		Write-Host "Started at: $startTime"
-		# Start stopwatch
-		$StopWatch = [System.Diagnostics.Stopwatch]::StartNew()
-		# Login to all iLO 4 devices
-		$connection = $ilo4list | Connect-HPEiLO -Credential $credentials -DisableCertificateAuthentication -Ea SilentlyContinue -Wa SilentlyContinue
-		# Upgrade all iLO 4 device firmware
-		Update-HPEiLOFirmware -Connection $connection -Location $ilo4FileLocation -confirm:$false -Wa SilentlyContinue -Ea SilentlyContinue | Out-Null
-		# Stop stopwatch upon completion
-		$StopWatch.Stop()
-		$minutes = $stopWatch.Elapsed.Minutes
-		$seconds = $stopWatch.Elapsed.Seconds
-		Write-Host "Upgrade completed in $minutes minutes and $seconds seconds."
+		UpgradeiLOFirmware $ilo4list $ilo4FileLocation
+		# Disconnect iLO sessions before continuing
+		Disconnect-HPEiLO -Connection $connection
 	}
-
-	# Disconnect iLO sessions before continuing
-	Disconnect-HPEiLO -Connection $connection
 
 	# Start iLO 5 firmware update
 
-	Write-Host "`n"
 	if ($ilo5list.count -eq 0) {
-		Write-Host "All iLO 5 devices, if detected, are up-to-date."
+		Write-Host "`nAll iLO 5 devices, if detected, are up-to-date.`n"
 	} else {
-		Write-Host "Upgrading out-of-date iLO 5 firmware for $ilo5count devices... (this may take up to 15 minutes)"
+		Write-Host "`nUpgrading $ilo5count out-of-date iLO 5 firmware devices... (this may take up to 15 minutes)"
 		Set-WindowTitle -Title "Upgrading ilO 5 firmware"
-		$startTime = (Get-Date).ToString()
-		Write-Host "Started at: $startTime"
-		# Start stopwatch
-		$StopWatch = [System.Diagnostics.Stopwatch]::StartNew()
-		# Login to all iLO 5 devices
-		$connection = $ilo5list | Connect-HPEiLO -Credential $credentials -DisableCertificateAuthentication -Ea SilentlyContinue -Wa SilentlyContinue
-		# Upgrade all iLO 5 device firmware
-		Update-HPEiLOFirmware -Connection $connection -Location $ilo5FileLocation -confirm:$false -Wa SilentlyContinue -Ea SilentlyContinue | Out-Null
-		# Stop stopwatch upon completion
-		$StopWatch.Stop()
-		$minutes = $stopWatch.Elapsed.Minutes
-		$seconds = $stopWatch.Elapsed.Seconds
-		Write-Host "Upgrade completed in $minutes minutes and $seconds seconds."
+		UpgradeiLOFirmware $ilo5list $ilo5FileLocation
+		# Disconnect iLO sessions before continuing
+		Disconnect-HPEiLO -Connection $connection
 	}
 } else {
 	Write-Host "Module HPEiLOCmdlets is not loaded or does not meet the minimum version requirement (2.0.0.1)" -ForegroundColor Red
