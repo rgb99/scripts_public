@@ -76,6 +76,8 @@ function UpgradeiLOFirmware {
 	$minutes = $stopWatch.Elapsed.Minutes
 	$seconds = $stopWatch.Elapsed.Seconds
 	Write-Host "Upgrade completed in $minutes minutes and $seconds seconds."
+	# Disconnect iLO sessions before continuing
+	Disconnect-HPEiLO -Connection $connection -Ea SilentlyContinue
 }
 
 Write-Host "`nChecking for HPEiLOCmdlets module..."
@@ -107,8 +109,10 @@ if ($moduleExists) {
 		1 {
 			$ipSearch = Read-Host -Prompt "`nEnter IP range to search for iLO's and upgrade firmware"
 			Write-Host "Finding iLO IP's in specified range: $ipSearch"
-			$out = Find-HPEiLO $ipSearch -Timeout 2 -Wa SilentlyContinue
+			$out = Find-HPEiLO $ipSearch -Timeout 5 -Wa SilentlyContinue
 			$total = $out.IP.count
+			$currentDir = (Get-Location).Path
+			$currentDir = $currentDir.TrimEnd('\')
 			$currentTime = Get-Date -Uformat %Y%m%d%R | foreach {$_ -replace ":",""}
 			$saveoutput = $currentDir+"\FoundiLO-"+$currentTime+".txt"
 			Write-Host "Found $total iLO('s)... " -NoNewLine
@@ -193,8 +197,6 @@ if ($moduleExists) {
 		Write-Host "Upgrading $ilo4count out-of-date iLO 4 firmware devices... (this may take up to 15 minutes)"
 		Set-WindowTitle -Title "Upgrading ilO 4 firmware"
 		UpgradeiLOFirmware $ilo4list $ilo4FileLocation
-		# Disconnect iLO sessions before continuing
-		Disconnect-HPEiLO -Connection $connection
 	}
 
 	# Start iLO 5 firmware update
@@ -205,8 +207,6 @@ if ($moduleExists) {
 		Write-Host "`nUpgrading $ilo5count out-of-date iLO 5 firmware devices... (this may take up to 15 minutes)"
 		Set-WindowTitle -Title "Upgrading ilO 5 firmware"
 		UpgradeiLOFirmware $ilo5list $ilo5FileLocation
-		# Disconnect iLO sessions before continuing
-		Disconnect-HPEiLO -Connection $connection
 	}
 } else {
 	Write-Host "Module HPEiLOCmdlets is not loaded or does not meet the minimum version requirement (2.0.0.1)" -ForegroundColor Red
