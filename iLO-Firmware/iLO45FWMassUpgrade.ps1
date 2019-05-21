@@ -87,7 +87,6 @@ if ($moduleExists) {
 	$username = Read-Host -Prompt "`nEnter iLO username"
 	$securepassword = Read-Host -Prompt "Enter iLO password" -AsSecureString
 	$credentials = New-Object System.Management.Automation.PSCredential -ArgumentList $username,$securepassword
-	#$password = $Credentials.GetNetworkCredential().Password
 
 	$step = 1
 
