@@ -248,34 +248,40 @@ if ($moduleExists) {
 	Write-Host "`n"
 	if ($ilo4list.count -eq 0) {
 		Write-Host "All iLO 4 devices, if detected, are up-to-date.`n" -ForegroundColor Green
-		$uptodate = 1
+		$iLO4uptodate = 1
 	} else {
 		Write-Host "Upgrading $ilo4count out-of-date iLO 4 firmware devices... (this may take up to 15 minutes)" -ForegroundColor Cyan
 		Set-WindowTitle -Title "Upgrading ilO 4 firmware"
 		UpgradeiLOFirmware $ilo4list $ilo4FileLocation
-		$uptodate = 0
+		$iLO4uptodate = 0
 	}
 
 	# Start iLO 5 firmware update
 
 	if ($ilo5list.count -eq 0) {
 		Write-Host "`nAll iLO 5 devices, if detected, are up-to-date.`n" -ForegroundColor Green
-		$uptodate = 1
+		$iLO5uptodate = 1
 	} else {
 		Write-Host "`nUpgrading $ilo5count out-of-date iLO 5 firmware devices... (this may take up to 15 minutes)" -ForegroundColor Cyan
 		Set-WindowTitle -Title "Upgrading ilO 5 firmware"
 		UpgradeiLOFirmware $ilo5list $ilo5FileLocation
-		$uptodate = 0
+		$iLO5uptodate = 0
     }
     
     # Wait for iLO devices to reset following the upgrade
-    if ($global:badlogin -eq $false -or $uptodate -eq 0) {
-        Write-Host "Waiting for two minutes while iLO devices reset." -ForegroundColor Cyan
-        Start-Sleep -Seconds 120
+    if ($global:badlogin -eq $false) {
+		if ($iLO4uptodate -eq 0 -or $iLO5uptodate -eq 0) {
+			Write-Host "Waiting for two minutes while iLO devices reset." -ForegroundColor Cyan
+			Start-Sleep -Seconds 120
+		}
     }
 
     # Verify that the firmware upgrade was successful
-    VerifyiLOFirmware $iloIPlist
+    if ($iLO4uptodate -eq 0 -or $iLO5uptodate -eq 0) {
+		VerifyiLOFirmware $iloIPlist
+	} else {
+		Write-Host "All devices up-to-date." -ForegroundColor Yellow
+	}
 
     # Display iLO's that experienced errors during information gathering
     if ($errorlist.count -gt 0) {
