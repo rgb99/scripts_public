@@ -5,9 +5,9 @@ HPE iLO 4 and iLO 5 mass upgrade script (Located in iLO-Firmware)
 - Lists any devices that encounter an error during data collection.
 
 
-iLO 4 2.72 download (Released Dec 20, 2019): https://support.hpe.com/hpsc/swd/public/detail?swItemId=MTX_73e5d39002d64f1ba55f91c90a
+iLO 4 2.73 download (Released Feb 13, 2020): https://support.hpe.com/hpsc/swd/public/detail?swItemId=MTX_ba3437a6c8d843f39ab5cace06
 
-iLO 5 2.12 download (Released Jan 23, 2020): https://support.hpe.com/hpsc/swd/public/detail?swItemId=MTX_3fa9c00c8cb64f19ab248a265b
+iLO 5 2.14 download (Released Feb 13, 2020): https://support.hpe.com/hpsc/swd/public/detail?swItemId=MTX_a9cfde8ba427435488d972d68f
 
 
 HPE ilO 4 Setting (Located in iLO-Settings)
