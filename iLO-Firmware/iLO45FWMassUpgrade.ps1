@@ -12,8 +12,8 @@
 #
 # Latest firmware version for various iLO generations
 $ilo3latest = 1.91
-$ilo4latest = 2.72
-$ilo5latest = 2.12
+$ilo4latest = 2.73
+$ilo5latest = 2.14
 # Firmware update file location for iLO 4 and iLO 5
 $ilo4FileLocation = "D:\HP\ilo4_273.bin"
 $ilo5FileLocation = "D:\HP\ilo5_214.bin"
